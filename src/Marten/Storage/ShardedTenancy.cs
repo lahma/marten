@@ -650,9 +650,9 @@ public class ShardedTenancy : ITenancy, ITenancyWithMasterDatabase, ITenantDatab
 
             if (_options.Events.UseTenantPartitionedEvents)
             {
-                // The drop takes the tenant's mt_events partition, which its DCB tag rows still
-                // reference (#5694)
-                await Internal.PerTenantPartitionedCleanup.DeleteTagRowsAsync(
+                // The drop takes the tenant's mt_events and mt_streams partitions, which its DCB tag
+                // rows and natural key rows still reference (#5694)
+                await Internal.PerTenantPartitionedCleanup.DeleteRowsReferencingTenantPartitionsAsync(
                     _options, database, [tenantId], logger, ct).ConfigureAwait(false);
             }
 

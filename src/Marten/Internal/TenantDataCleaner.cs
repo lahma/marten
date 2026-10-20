@@ -37,9 +37,10 @@ internal class TenantDataCleaner
         var capturedSuffixes = PerTenantPartitionedCleanup.CaptureSequenceSuffixes(
             _store.Options, database, new[] { _tenantId });
 
-        // The tenant's DCB tag rows go first, before both the partition drop and the deletes that follow it
-        await PerTenantPartitionedCleanup.DeleteTagRowsAsync(_store.Options, database, [_tenantId], logger, token)
-            .ConfigureAwait(false);
+        // The tenant's DCB tag rows and natural key rows go first, before both the partition drop and the
+        // deletes that follow it
+        await PerTenantPartitionedCleanup.DeleteRowsReferencingTenantPartitionsAsync(_store.Options, database,
+            [_tenantId], logger, token).ConfigureAwait(false);
 
         if (_store.Options is { TenantPartitions: not null})
         {
